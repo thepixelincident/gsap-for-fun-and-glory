@@ -9,49 +9,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Monofett&display=swap" rel="stylesheet">
   <style>
     
-    /* html { overflow: hidden; } */
+body {
+  margin: 0;
+  padding: 0;
+}
 
-    body {
-        margin: 0px;
-        padding:0px;
-      }
+p { margin: 0; }
 
-    #grid-svg {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
+.container-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
 
-    p { margin: 0; }
+.container-demo {
+  display: flex;
+  flex-direction: column;
+  background-color: #090909;
+  flex: 1;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .container-main {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        height: 100vh;
-      }
+.the-pixel-incident {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Monofett', cursive;
+  font-size: clamp(24px, 5vw, 40px);
+  color: #2e2e2e;
+  width: 100%;
+  justify-content: flex-end;
+  padding: clamp(16px, 4vw, 40px);
+  box-sizing: border-box;
+}
 
-    .container-demo {
-        display: flex;
-        flex-direction: column;
-        background-color: #090909;
-        height: 100%;
-        width: 100%;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-    .the-pixel-incident {
-        display: flex;
-        flex-direction: row;
-        font-family: 'Monofett', cursive;
-        font-size: 40px;
-        color: #2e2e2e;
-        width: calc(100% - 80px);
-        justify-content: flex-end;
-        margin: 40px;
-        padding: 40px;
-      }
+canvas {
+  margin-top: clamp(16px, 4vw, 40px);
+  max-width: min(400px, 90vw);
+  max-height: min(400px, 90vw);
+}
 
   </style>
 </head>
@@ -84,21 +81,32 @@
 </body>
 
 <script>
+
 const canvas = document.getElementById('jellyfish');
 const ctx = canvas.getContext('2d');
 const w = 400;
 let t = 0;
+let flashI = -1;
+let flashRadius = 0;
+let flashCooldown = Math.random() * 600 + 200;
 
 function mag(a, b) {
   return Math.sqrt(a * a + b * b);
-  }
+}
 
 function draw() {
   ctx.fillStyle = 'rgba(9, 9, 9, 1)';
   ctx.fillRect(0, 0, w, w);
-  ctx.fillStyle = 'rgba(146, 146, 146, 0.26)';
 
-  t += Math.PI / 20;
+  t += Math.PI / 60;
+
+  flashCooldown--;
+  if (flashCooldown <= 0) {
+    flashI = Math.floor(Math.random() * 10000);
+    flashRadius = 0;
+    flashCooldown = Math.random() * 600 + 200;
+  }
+  flashRadius += 80;
 
   for (let i = 10000; i--;) {
     const y = i / 43;
@@ -110,11 +118,19 @@ function draw() {
     const px = (q + d * d ** Math.sin(d * 2 - t / 3)) * Math.cos(c) + 200;
     const py = q * Math.sin(c) + 200;
 
-    ctx.fillRect(px, py, 1, 1);
+    const distFromFlash = Math.abs(i - flashI);
+    if (distFromFlash < flashRadius && distFromFlash > flashRadius - 200) {
+      const brightness = 1 - (distFromFlash - (flashRadius - 200)) / 200;
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.26 + brightness * 0.74})`;
+    } else {
+      ctx.fillStyle = 'rgba(146, 146, 146, 0.26)';
     }
 
-  requestAnimationFrame(draw);
+    ctx.fillRect(px, py, 1, 1);
   }
+
+  requestAnimationFrame(draw);
+}
 
 draw();
 
