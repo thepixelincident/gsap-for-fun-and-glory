@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Pixel Incident</title>
+  <link href="https://fonts.googleapis.com/css2?family=Monofett&display=swap" rel="stylesheet">
+  <style>
+    
+    /* html { overflow: hidden; } */
+
+    body {
+        margin: 0px;
+        padding:0px;
+      }
+
+    #grid-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+    p { margin: 0; }
+
+    .container-main {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        height: 100vh;
+      }
+
+    .container-demo {
+        display: flex;tc
+        flex-direction: column;
+        background-color: #090909;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+    .the-pixel-incident {
+        display: flex;
+        flex-direction: row;
+        font-family: 'Monofett', cursive;
+        font-size: 40px;
+        color: #2e2e2e;
+        width: calc(100% - 80px);
+        justify-content: flex-end;
+        margin: 40px;
+        padding: 40px;
+      }
+
+  </style>
+</head>
+
+<body>
+  <!-- container - main -->
+  <div id="containter-main" class="container-main"> 
+    <!-- container - demo jellyfish -->
+    <div id="container-demo" class="container-demo"> 
+
+      <!-- canvas test -->
+      <canvas id="jellyfish" width="400" height="400"></canvas>
+      <!-- container - demo - THEPIXELINCIDENT --> 
+      <div id="the-pixel-incident" class="the-pixel-incident">
+        <p>THEPIXELINCIDENT</p>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+<script>
+const canvas = document.getElementById('jellyfish');
+const ctx = canvas.getContext('2d');
+const w = 400;
+let t = 0;
+
+function mag(a, b) {
+  return Math.sqrt(a * a + b * b);
+  }
+
+function draw() {
+  ctx.fillStyle = 'rgba(9, 9, 9, 1)';
+  ctx.fillRect(0, 0, w, w);
+  ctx.fillStyle = 'rgba(146, 146, 146, 0.26)';
+
+  t += Math.PI / 20;
+
+  for (let i = 10000; i--;) {
+    const y = i / 43;
+    const k = 5 * Math.cos(i / 14) * Math.cos(y / 30);
+    const e = y / 8 - 13;
+    const d = mag(k, e) ** 2 / 59 + 6;
+    const q = 90 - 5 * Math.sin(Math.atan2(k, e) * e) + k * (3 + Math.sin(d * d - t * 2));
+    const c = d / 2 - t / 18;
+    const px = (q + d * d ** Math.sin(d * 2 - t / 3)) * Math.cos(c) + 200;
+    const py = q * Math.sin(c) + 200;
+
+    ctx.fillRect(px, py, 1, 1);
+    }
+
+  requestAnimationFrame(draw);
+  }
+
+draw();
+
+</script>
+</html>
